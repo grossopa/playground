@@ -21,22 +21,24 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.github.grossopa.example.sm;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+package com.github.grossopa.example.sm.model;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+import java.util.List;
 
 /**
- * The entrance class.
+ * The simple user
  *
  * @author Jack Yin
  * @since 1.0
  */
-@SpringBootApplication
-public class ServiceMeshExampleModernApplication {
-
-	public static void main(String[] args) {
-		SpringApplication.run(ServiceMeshExampleModernApplication.class, args);
-	}
-
+@Data
+@AllArgsConstructor
+public class User {
+    private final String id;
+    private final String name;
+    private final List<String> roles;
 }
