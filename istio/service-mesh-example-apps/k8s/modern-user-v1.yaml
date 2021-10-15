@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: modern-user
+spec:
+  selector:
+    matchLabels:
+      app: modern-user
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: modern-user
+    spec:
+      containers:
+        - name: modern-user
+          image: service-mesh-example-apps/modern-user:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+          env:
+            - name: VERSION
+              value: "v1"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: modern-user
+  labels:
+    app: modern-user
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      name: http
+  selector:
+    app: modern-user

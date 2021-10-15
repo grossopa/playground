@@ -1,20 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
-    <groupId>com.github.grossopa</groupId>
     <artifactId>service-mesh-example-apps</artifactId>
+    <groupId>com.github.grossopa</groupId>
     <version>1.0-SNAPSHOT</version>
   </parent>
-  <artifactId>service-mesh-example-modern-user</artifactId>
-  <version>1.0-SNAPSHOT</version>
-  <name>Service Mesh Example Apps - Modern User</name>
-  <description>Demo projects for Spring Boot + Istio</description>
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>service-mesh-example-modern-booking-service</artifactId>
+
   <properties>
+    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
     <java.version>11</java.version>
     <spring-cloud.version>2020.0.3</spring-cloud.version>
   </properties>
+
+  <name>Service Mesh Example Apps - Modern User</name>
+  <description>Demo projects for Spring Boot + Istio</description>
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -32,10 +37,10 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
-<!--    <dependency>-->
-<!--      <groupId>org.springframework.cloud</groupId>-->
-<!--      <artifactId>spring-cloud-starter-config</artifactId>-->
-<!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>org.springframework.cloud</groupId>-->
+    <!--      <artifactId>spring-cloud-starter-config</artifactId>-->
+    <!--    </dependency>-->
     <dependency>
       <groupId>io.springfox</groupId>
       <artifactId>springfox-boot-starter</artifactId>
@@ -48,10 +53,14 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>com.google.cloud.tools</groupId>
-        <artifactId>jib-maven-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <exclude>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok</artifactId>
+            </exclude>
+          </excludes>
+        </configuration>
       </plugin>
     </plugins>
   </build>

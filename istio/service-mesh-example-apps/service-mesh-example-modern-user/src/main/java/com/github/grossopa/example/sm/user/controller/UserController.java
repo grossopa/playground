@@ -22,23 +22,38 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.github.grossopa.example.sm.model;
+package com.github.grossopa.example.sm.user.controller;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import com.github.grossopa.example.sm.user.model.User;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static java.util.Arrays.asList;
+import static java.util.Arrays.stream;
+
 /**
- * The simple user
+ * Returns user information from the other persistent layer e.g. LDAP
  *
  * @author Jack Yin
  * @since 1.0
  */
-@Data
-@AllArgsConstructor
-public class User {
-    private final String id;
-    private final String name;
-    private final List<String> roles;
+@Api(tags = "user")
+@Slf4j
+@RestController
+@RequestMapping("/user")
+public class UserController {
+
+    private static User[] USERS = new User[]{new User("id1", "Jack", asList("admin", "user")),
+            new User("id2", "Mary", List.of("user")),};
+
+    @ApiOperation("find-by-id")
+    @GetMapping("/{id}")
+    public User findById(@PathVariable("id") String id) {
+        log.info("Finds user by id {}", id);
+        return stream(USERS).filter(user -> id.equalsIgnoreCase(user.getId())).findAny().orElseThrow();
+    }
 }

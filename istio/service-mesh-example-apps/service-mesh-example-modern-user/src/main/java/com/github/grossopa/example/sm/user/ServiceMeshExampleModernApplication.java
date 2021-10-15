@@ -21,42 +21,22 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+package com.github.grossopa.example.sm.user;
 
-package com.github.grossopa.example.sm.controller;
-
-import com.github.grossopa.example.sm.model.User;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Controller;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Arrays;
-import java.util.List;
-
-import static java.util.Arrays.asList;
-import static java.util.Arrays.stream;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * Returns user information from the other persistent layer e.g. LDAP
+ * The entrance class.
  *
  * @author Jack Yin
  * @since 1.0
  */
-@Api(tags = "user")
-@Slf4j
-@RestController
-@RequestMapping("/user")
-public class UserController {
+@SpringBootApplication
+public class ServiceMeshExampleModernApplication {
 
-    private static User[] USERS = new User[]{new User("id1", "Jack", asList("admin", "user")),
-            new User("id2", "Mary", List.of("user")),};
-
-    @ApiOperation("find-by-id")
-    @GetMapping("/{id}")
-    public User findById(@PathVariable("id") String id) {
-        log.info("Finds user by id {}", id);
-        return stream(USERS).filter(user -> id.equalsIgnoreCase(user.getId())).findAny().orElseThrow();
+    public static void main(String[] args) {
+        SpringApplication.run(AppConfig.class, args);
     }
+
 }
