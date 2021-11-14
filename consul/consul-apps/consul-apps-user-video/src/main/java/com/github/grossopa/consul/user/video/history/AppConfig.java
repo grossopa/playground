@@ -53,12 +53,6 @@ public class AppConfig {
     @Autowired
     RestTemplate restTemplate;
 
-    @Scheduled(fixedRate = 10000L)
-    public void scheduledJob() {
-        log.info("scheduling job triggerred");
-        log.info(restTemplate.getForEntity("http://modern-user:8080/user/id1", String.class).getBody());
-    }
-
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2).select().apis(RequestHandlerSelectors.any())

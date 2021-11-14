@@ -84,7 +84,7 @@
   <modules>
     <module>consul-apps-user</module>
     <module>consul-apps-user-friends</module>
-    <module>consul-apps-user-video-history</module>
+    <module>consul-apps-user-video</module>
   </modules>
 
 </project>

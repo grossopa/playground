@@ -9,7 +9,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>consul-apps-user-video-history</artifactId>
+  <artifactId>consul-apps-user-video</artifactId>
 
   <properties>
     <maven.compiler.source>11</maven.compiler.source>

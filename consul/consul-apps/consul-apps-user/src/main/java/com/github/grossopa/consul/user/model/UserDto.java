@@ -26,6 +26,7 @@ package com.github.grossopa.consul.user.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * the user dto
@@ -34,6 +35,7 @@ import lombok.Data;
  * @since 1.0
  */
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 public class UserDto {
     private String id;

@@ -25,6 +25,7 @@ package com.github.grossopa.consul.user;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.PropertySource;
 
 /**
  * The entrance class.
@@ -33,6 +34,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @since 1.0
  */
 @SpringBootApplication
+@PropertySource("classpath:application.${environment}.properties")
 public class UserApplication {
 
     public static void main(String[] args) {

@@ -21,22 +21,27 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.github.grossopa.consul.user.video.history;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+package com.github.grossopa.consul.user.model.friends;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 /**
- * The entrance class.
- *
  * @author Jack Yin
  * @since 1.0
  */
-@SpringBootApplication
-public class UserVideoHistoryApplication {
-
-    public static void main(String[] args) {
-        SpringApplication.run(AppConfig.class, args);
-    }
-
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class UserFriendsDto {
+    private String id;
+    private String userId;
+    private String friendUserId;
+    private LocalDateTime createdOn;
+    private List<String> tags;
 }

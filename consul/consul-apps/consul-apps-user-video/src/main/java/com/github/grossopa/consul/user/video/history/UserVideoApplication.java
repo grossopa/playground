@@ -21,23 +21,29 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+package com.github.grossopa.consul.user.video.history;
 
-package com.github.grossopa.consul.user.model;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.DefaultApplicationArguments;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.PropertySource;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import java.util.List;
 
 /**
+ * The entrance class.
+ *
  * @author Jack Yin
  * @since 1.0
  */
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@NonNull
-public class UserLoginRequestDto {
-    private String uid;
-    private String requestToken;
+@SpringBootApplication
+@PropertySource("classpath:application.${environment}.properties")
+public class UserVideoApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(AppConfig.class, args);
+    }
+
 }

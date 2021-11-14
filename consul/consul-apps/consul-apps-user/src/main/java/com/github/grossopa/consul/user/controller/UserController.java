@@ -26,7 +26,9 @@ package com.github.grossopa.consul.user.controller;
 
 import com.github.grossopa.consul.user.model.UserLoginDto;
 import com.github.grossopa.consul.user.model.UserLoginRequestDto;
+import com.github.grossopa.consul.user.model.UserProfileResponseDto;
 import com.github.grossopa.consul.user.service.UserLoginService;
+import com.github.grossopa.consul.user.service.UserProfileService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +48,9 @@ public class UserController {
     @Autowired
     UserLoginService userLoginService;
 
+    @Autowired
+    UserProfileService userProfileService;
+
     @ApiOperation("login")
     @PostMapping("/login")
     public UserLoginDto login(@RequestBody UserLoginRequestDto requestDto) {
@@ -53,5 +58,13 @@ public class UserController {
         log.debug("Request token {}", requestDto.getRequestToken());
 
         return userLoginService.login(requestDto.getUid(), requestDto.getRequestToken());
+    }
+
+    @ApiOperation("profile")
+    @GetMapping("/{userId}/profile")
+    public UserProfileResponseDto profile(@PathVariable("userId") String userId) {
+        log.info("User profile request {}", userId);
+
+        return userProfileService.findUserProfile(userId, "___");
     }
 }

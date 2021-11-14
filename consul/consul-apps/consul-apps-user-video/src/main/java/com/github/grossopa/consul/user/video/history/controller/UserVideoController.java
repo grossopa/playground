@@ -22,22 +22,38 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.github.grossopa.consul.user.model;
+package com.github.grossopa.consul.user.video.history.controller;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import com.github.grossopa.consul.user.video.history.model.UserVideoHistoryDto;
+import com.github.grossopa.consul.user.video.history.service.UserVideoService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * @author Jack Yin
  * @since 1.0
  */
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@NonNull
-public class UserLoginRequestDto {
-    private String uid;
-    private String requestToken;
+@Api(tags = "user-video")
+@Slf4j
+@RestController
+@RequestMapping("/")
+public class UserVideoController {
+
+    @Autowired
+    UserVideoService userVideoService;
+
+    @ApiOperation("user-video-history")
+    @GetMapping("/{userId}/all-video-history")
+    public List<UserVideoHistoryDto> userVideoHistory(@PathVariable("userId") String userId) {
+        log.info("User video history request {}", userId);
+        return userVideoService.findUserVideoHistory(userId);
+    }
 }

@@ -41,15 +41,15 @@ import java.util.List;
 @Api(tags = "user-friends")
 @Slf4j
 @RestController
-@RequestMapping("/user-friends")
+@RequestMapping("/")
 public class UserFriendsController {
 
     @Autowired
     UserFriendsService userFriendsService;
 
-    @ApiOperation("find-all")
-    @GetMapping("/{userId}/find-all")
-    public List<UserFriendsDto> login(@PathVariable("userId") String userId) {
+    @ApiOperation("all-friends")
+    @GetMapping("/{userId}/all-friends")
+    public List<UserFriendsDto> findFriends(@PathVariable("userId") String userId) {
         log.info("User friend request {}", userId);
         return userFriendsService.findAll(userId);
     }
