@@ -3,6 +3,7 @@ package com.github.grossopa.consul.user.friends;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -25,6 +26,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  * @author Jack Yin
  * @since 1.0
  */
+@EnableDiscoveryClient
 @EnableOpenApi
 @EnableSwagger2
 @EnableWebSecurity

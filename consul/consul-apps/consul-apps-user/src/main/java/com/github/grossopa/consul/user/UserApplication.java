@@ -34,7 +34,7 @@ import org.springframework.context.annotation.PropertySource;
  * @since 1.0
  */
 @SpringBootApplication
-@PropertySource("classpath:application.${environment}.properties")
+@PropertySource({"classpath:application.properties", "classpath:application.${environment}.properties"})
 public class UserApplication {
 
     public static void main(String[] args) {

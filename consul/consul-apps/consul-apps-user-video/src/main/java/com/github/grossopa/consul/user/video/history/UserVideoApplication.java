@@ -23,14 +23,9 @@
  */
 package com.github.grossopa.consul.user.video.history;
 
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.boot.DefaultApplicationArguments;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.PropertySource;
-
-import java.util.List;
 
 /**
  * The entrance class.
@@ -39,7 +34,7 @@ import java.util.List;
  * @since 1.0
  */
 @SpringBootApplication
-@PropertySource("classpath:application.${environment}.properties")
+@PropertySource({"classpath:application.properties", "classpath:application.${environment}.properties"})
 public class UserVideoApplication {
 
     public static void main(String[] args) {
