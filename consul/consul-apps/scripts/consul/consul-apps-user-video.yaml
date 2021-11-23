@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: videoaccount
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: consul-apps-user-video
+spec:
+  selector:
+    app: consul-apps-user-video
+  ports:
+    - port: 8080
+      targetPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: consul-apps-user-video
+  name: consul-apps-user-video
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: consul-apps-user-video
+  template:
+    metadata:
+      annotations:
+        'consul.hashicorp.com/connect-inject': 'true'
+      labels:
+        app: consul-apps-user-video
+    spec:
+      containers:
+        - name: consul-apps-user-video
+          image: consul-apps/user-video:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080

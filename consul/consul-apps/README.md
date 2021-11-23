@@ -45,3 +45,14 @@ EOF
 `kubectl get pods`
 
 `kubectl port-forward consul-server-0 8500:8500`
+
+`kubectl apply -f scripts/consul/consul-apps-user-video.yaml`
+
+Rebuild
+```
+mvn clean install
+docker build -t consul-apps/user-video .\consul-apps-user-video\
+minikube image load consul-apps/user-video:latest
+kubectl delete -f scripts/consul/consul-apps-user-video.yaml
+kubectl apply -f scripts/consul/consul-apps-user-video.yaml
+```
