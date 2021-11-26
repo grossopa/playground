@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -52,6 +53,7 @@ public class AppConfig {
         }
     }
 
+    @LoadBalanced
     @Bean
     public RestTemplate userFriendsRestTemplate() {
         RestTemplate restTemplate = new RestTemplate();
@@ -59,7 +61,9 @@ public class AppConfig {
         return restTemplate;
     }
 
+
     @Bean
+    @LoadBalanced
     public RestTemplate userVideoRestTemplate() {
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.setUriTemplateHandler(new DefaultUriBuilderFactory(userVideoBaseUrl));

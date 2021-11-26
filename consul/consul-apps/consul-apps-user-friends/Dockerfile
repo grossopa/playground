@@ -1,4 +1,4 @@
 FROM openjdk:11
-ARG JAR_FILE=target/consul-app-user-friends-*.jar
-COPY ${JAR_FILE} consul-app-user-friends.jar
-ENTRYPOINT ["java","-jar","/consul-app-user-friends.jar","--environment=k8s"]
+ARG JAR_FILE=target/consul-apps-user-friends-*.jar
+COPY ${JAR_FILE} consul-apps-user-friends.jar
+ENTRYPOINT ["java","-jar","/consul-apps-user-friends.jar","--environment=k8s"]

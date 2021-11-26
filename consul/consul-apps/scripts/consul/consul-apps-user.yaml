@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: useraccount
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: consul-apps-user
+spec:
+  selector:
+    app: consul-apps-user
+  ports:
+    - port: 8080
+      targetPort: 8080
+---
+#apiVersion: v1
+#kind: Service
+#metadata:
+#  name: consul-apps-user
+#spec:
+#  externalName: consul-apps-user.service.consul
+#  type: ExternalName
+#---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: consul-apps-user
+  name: consul-apps-user
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: consul-apps-user
+  template:
+    metadata:
+      annotations:
+        consul.hashicorp.com/connect-inject: 'true'
+       # consul.hashicorp.com/connect-service-upstreams: consul-apps-user-friends:8080,consul-apps-user-video:8080
+      labels:
+        app: consul-apps-user
+    spec:
+      containers:
+        - name: consul-apps-user
+          image: consul-apps/user:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
