@@ -1,0 +1,29 @@
+spring:
+  main:
+    web-application-type: none
+  datasource:
+    url: jdbc:mysql://localhost:3306/covid_crawler
+    username: root
+    password:
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: update
+selenium:
+  executable-path: D:\software\drivers\msedgedriver-99.exe
+  driver-version: 99.0.1150.55
+  port: 38383
+  driver-url: http://localhost:38383
+wsjkw:
+  index-page-url: https://wsjkw.sh.gov.cn/xwfb/index{0}.html
+  index-max-page-size: 2
+  index-title-keywords:
+    - 本市各区
+    - 居住地
+  index-sleep-ms: 3000
+  daily-district-keywords:
+    - 居住于
+  daily-district-confirmed-regex: ([0-9]+)例本?土?确诊病例
+  daily-district-asymptomatic-regex: ([0-9]+)例本?土?无症状感染者
+  daily-district-ignore-keywords:
+    - 已对相关居住地

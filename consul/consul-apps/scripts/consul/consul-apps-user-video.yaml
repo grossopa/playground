@@ -17,9 +17,9 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: consul-apps-user-video
   labels:
     app: consul-apps-user-video
-  name: consul-apps-user-video
 spec:
   replicas: 1
   selector:
@@ -29,6 +29,8 @@ spec:
     metadata:
       annotations:
         'consul.hashicorp.com/connect-inject': 'true'
+        'consul.hashicorp.com/transparent-proxy': 'true'
+        #'consul.hashicorp.com/transparent-proxy-overwrite-probes': 'true'
       labels:
         app: consul-apps-user-video
     spec:
@@ -38,3 +40,6 @@ spec:
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
+          args: ["-Dspring.cloud.consul.discovery.prefer-ip-address=true"]
+      #hostNetwork: true
+      #dnsPolicy: ClusterFirstWithHostNet

@@ -48,11 +48,19 @@ EOF
 
 `kubectl apply -f scripts/consul/consul-apps-user-video.yaml`
 
-Rebuild
+## Hashicorp Projects
+
+```
+kubectl apply -f scripts/demo/counting.yaml
+kubectl apply -f scripts/demo/dashboard.yaml
+```
+
+## Projects
 ```
 mvn clean install
 docker build -t consul-apps/user-video .\consul-apps-user-video\
 minikube image load consul-apps/user-video:latest
+
 kubectl delete -f scripts/consul/consul-apps-user-video.yaml
 consul services deregister -id=consul-apps-user-video
 kubectl apply -f scripts/consul/consul-apps-user-video.yaml
