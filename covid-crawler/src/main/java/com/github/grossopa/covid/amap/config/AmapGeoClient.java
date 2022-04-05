@@ -22,31 +22,41 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.github.grossopa.covid.sh.service;
+package com.github.grossopa.covid.amap.config;
 
-import com.github.grossopa.covid.sh.dao.entity.ShDistrictEntity;
-import com.github.grossopa.covid.sh.dao.repository.ShDistinctRepository;
+import com.github.grossopa.covid.amap.model.GeoCodeResult;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.transaction.Transactional;
-import java.util.List;
-
-import static com.google.common.collect.Lists.newArrayList;
-import static java.util.stream.Collectors.toList;
+import static org.springframework.web.util.UriComponentsBuilder.fromPath;
 
 /**
  * @author Jack Yin
  * @since 1.0
  */
-@Service
-@Transactional
-public class ShCovidLocationService {
+@Component
+public class AmapGeoClient {
 
     @Autowired
-    ShDistinctRepository shDistinctRepository;
+    AmapProperties properties;
 
-    public List<String> findDistricts() {
-        return newArrayList(shDistinctRepository.findAll()).stream().map(ShDistrictEntity::getName).collect(toList());
+    @Autowired
+    @Qualifier("amapRestTemplate")
+    RestTemplate restTemplate;
+
+    public GeoCodeResult searchGeo(String address) {
+        UriComponentsBuilder builder = createDefaultParams();
+        builder.queryParam("address", address);
+        return restTemplate.getForEntity(builder.build(false).toUriString(), GeoCodeResult.class).getBody();
     }
+
+    private UriComponentsBuilder createDefaultParams() {
+        return fromPath("/geocode/geo").queryParam("key", properties.getKey())
+                .queryParam("city", properties.getGeoRequest().getDefaultCity())
+                .queryParam("output", properties.getGeoRequest().getDefaultOutput());
+    }
+
 }

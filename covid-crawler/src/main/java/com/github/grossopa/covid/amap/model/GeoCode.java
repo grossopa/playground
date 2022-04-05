@@ -22,36 +22,48 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.github.grossopa.covid;
+package com.github.grossopa.covid.amap.model;
 
-import com.github.grossopa.covid.sh.service.ShCovidService;
-import com.github.grossopa.covid.sh.service.StatisticsService;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ArrayUtils;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.context.ConfigurableApplicationContext;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import lombok.Data;
+
+import java.util.List;
+
+import static org.apache.commons.lang3.StringUtils.join;
 
 /**
- * To crawl the information and stores in CSV
- *
  * @author Jack Yin
  * @since 1.0
  */
-@Slf4j
-@SpringBootApplication
-public class CovidCrawlerApplication {
+@Data
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class GeoCode {
 
+    private String location;
 
-    public static void main(String[] args) {
-        SpringApplicationBuilder builder = new SpringApplicationBuilder(CovidCrawlerApplication.class);
-        SpringApplication application = builder.build();
-        ConfigurableApplicationContext context = application.run(
-                ArrayUtils.add(args, "--spring.config.location=classpath:/application.yaml,file:./secrets/amap.yaml"));
+    @JsonIgnore
+    private String adcode;
+    @JsonIgnore
+    private String street;
+    @JsonIgnore
+    private String level;
 
-        context.getBean(ShCovidService.class).collectData();
-        context.getBean(ShCovidService.class).refreshLocations();
-        context.getBean(StatisticsService.class).updateAll();
+    @JsonSetter("street")
+    public void setStreet(Object street) {
+        this.street = street instanceof String ? String.valueOf(street) : "";
     }
+
+    @JsonSetter("level")
+    public void setLevel(Object level) {
+        this.level = level instanceof String ? String.valueOf(level) : "";
+    }
+
+    @JsonSetter("adcode")
+    public void setAdcode(Object adcode) {
+        this.adcode = adcode instanceof String ? String.valueOf(adcode) : "";
+    }
+
 }

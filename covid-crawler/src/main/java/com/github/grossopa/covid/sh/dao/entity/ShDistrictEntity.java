@@ -24,8 +24,8 @@
 
 package com.github.grossopa.covid.sh.dao.entity;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -35,8 +35,8 @@ import javax.persistence.Table;
  * @author Jack Yin
  * @since 1.0
  */
-@Data
-@EqualsAndHashCode(callSuper = true)
+@Getter
+@Setter
 @Entity
 @Table(name = "sh_district")
 public class ShDistrictEntity extends AbstractEntity {

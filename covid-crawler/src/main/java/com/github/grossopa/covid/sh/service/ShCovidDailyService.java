@@ -81,13 +81,9 @@ public class ShCovidDailyService {
                 dailyDistrictEntity.setCreateTime(currentTime);
                 dailyDistrictEntity.setUpdateTime(currentTime);
 
-                List<ShCovidDailyLocationEntity> locations = dist.getLocations().stream().map(loc -> {
-                    ShCovidDailyLocationEntity locationEntity = new ShCovidDailyLocationEntity();
-                    locationEntity.setName(loc);
-                    locationEntity.setCreateTime(currentTime);
-                    locationEntity.setUpdateTime(currentTime);
-                    return locationEntity;
-                }).collect(toList());
+                List<ShCovidDailyLocationEntity> locations = dist.getLocations().stream()
+                        .map(loc -> ShCovidDailyLocationEntity.createSimple(loc, currentTime, dailyDistrictEntity))
+                        .collect(toList());
                 dailyDistrictEntity.setLocations(locations);
                 return dailyDistrictEntity;
             }).collect(toList());

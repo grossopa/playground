@@ -24,8 +24,8 @@
 
 package com.github.grossopa.covid.sh.dao.entity;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.List;
@@ -36,8 +36,8 @@ import static javax.persistence.CascadeType.ALL;
  * @author Jack Yin
  * @since 1.0
  */
-@Data
-@EqualsAndHashCode(callSuper = true)
+@Getter
+@Setter
 @Entity
 @Table(name = "sh_covid_daily_district")
 public class ShCovidDailyDistrictEntity extends AbstractAuditedEntity {
@@ -51,9 +51,11 @@ public class ShCovidDailyDistrictEntity extends AbstractAuditedEntity {
     @Column(name = "asymptomatic", nullable = false)
     private Integer asymptomatic;
 
-    @OneToMany(cascade = ALL)
-    @JoinColumn(name = "sh_covid_daily_location_id")
+    @OneToMany(cascade = ALL, mappedBy = "dailyDistrict")
     private List<ShCovidDailyLocationEntity> locations;
+
+    @Column(name = "district_id", updatable = false, insertable = false)
+    private Long districtId;
 
 
 }

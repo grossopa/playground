@@ -28,10 +28,17 @@ import com.github.grossopa.covid.sh.dao.entity.ShCovidDailyLocationEntity;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 /**
  * @author Jack Yin
  * @since 1.0
  */
 @Repository
 public interface ShCovidLocationRepository extends CrudRepository<ShCovidDailyLocationEntity, Long> {
+
+    List<ShCovidDailyLocationEntity> findByAmapLatitude(BigDecimal latitude);
+
+    List<ShCovidDailyLocationEntity> findByNameLike(String s);
 }

@@ -41,7 +41,7 @@ import static java.util.TimeZone.getTimeZone;
 public class DateUtil {
 
     public static Calendar createBy(int month, int day) {
-        Calendar calendar = Calendar.getInstance(getTimeZone("GMT+:08:00"));
+        Calendar calendar = Calendar.getInstance(getTimeZone("GMT+:00:00"));
         calendar.set(MONTH, month - 1);
         calendar.set(DAY_OF_MONTH, day);
         calendar.set(HOUR, 0);

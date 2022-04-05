@@ -22,36 +22,28 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.github.grossopa.covid;
+package com.github.grossopa.covid.amap.config;
 
-import com.github.grossopa.covid.sh.service.ShCovidService;
-import com.github.grossopa.covid.sh.service.StatisticsService;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ArrayUtils;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestTemplate;
 
 /**
- * To crawl the information and stores in CSV
- *
  * @author Jack Yin
  * @since 1.0
  */
-@Slf4j
-@SpringBootApplication
-public class CovidCrawlerApplication {
+@Configuration
+@SuppressWarnings("unused")
+public class AmapConfig {
 
+    @Autowired
+    AmapProperties amapProperties;
 
-    public static void main(String[] args) {
-        SpringApplicationBuilder builder = new SpringApplicationBuilder(CovidCrawlerApplication.class);
-        SpringApplication application = builder.build();
-        ConfigurableApplicationContext context = application.run(
-                ArrayUtils.add(args, "--spring.config.location=classpath:/application.yaml,file:./secrets/amap.yaml"));
-
-        context.getBean(ShCovidService.class).collectData();
-        context.getBean(ShCovidService.class).refreshLocations();
-        context.getBean(StatisticsService.class).updateAll();
+    @Bean(name = "amapRestTemplate")
+    public RestTemplate amapRestTemplate() {
+        RestTemplateBuilder builder = new RestTemplateBuilder();
+        return builder.rootUri(amapProperties.getBaseUrl()).build();
     }
 }

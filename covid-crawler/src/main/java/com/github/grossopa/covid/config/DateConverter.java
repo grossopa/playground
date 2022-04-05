@@ -22,36 +22,32 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.github.grossopa.covid;
+package com.github.grossopa.covid.config;
 
-import com.github.grossopa.covid.sh.service.ShCovidService;
-import com.github.grossopa.covid.sh.service.StatisticsService;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ArrayUtils;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.boot.context.properties.ConfigurationPropertiesBinding;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.Nonnull;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
- * To crawl the information and stores in CSV
- *
  * @author Jack Yin
  * @since 1.0
  */
-@Slf4j
-@SpringBootApplication
-public class CovidCrawlerApplication {
+@Component
+@ConfigurationPropertiesBinding
+@SuppressWarnings("unused")
+public class DateConverter implements Converter<String, Date> {
 
-
-    public static void main(String[] args) {
-        SpringApplicationBuilder builder = new SpringApplicationBuilder(CovidCrawlerApplication.class);
-        SpringApplication application = builder.build();
-        ConfigurableApplicationContext context = application.run(
-                ArrayUtils.add(args, "--spring.config.location=classpath:/application.yaml,file:./secrets/amap.yaml"));
-
-        context.getBean(ShCovidService.class).collectData();
-        context.getBean(ShCovidService.class).refreshLocations();
-        context.getBean(StatisticsService.class).updateAll();
+    @Override
+    public Date convert(@Nonnull String source) {
+        try {
+            return new SimpleDateFormat("yyyy-MM-dd").parse(source);
+        } catch (ParseException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 }

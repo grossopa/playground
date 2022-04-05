@@ -1,6 +1,8 @@
 spring:
   main:
     web-application-type: none
+  config:
+    location: file:./secrets/amap.yaml
   datasource:
     url: jdbc:mysql://localhost:3306/covid_crawler
     username: root
@@ -9,12 +11,22 @@ spring:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
       ddl-auto: update
+logging:
+  level:
+    root: info
+amap:
+  base-url: https://restapi.amap.com/v3
+  geo-request:
+    default-city: 上海
+    default-output: JSON
 selenium:
   executable-path: D:\software\drivers\msedgedriver-99.exe
   driver-version: 99.0.1150.55
   port: 38383
   driver-url: http://localhost:38383
 wsjkw:
+  daily-v2:
+      effective-date: 2022-03-30
   index-page-url: https://wsjkw.sh.gov.cn/xwfb/index{0}.html
   index-max-page-size: 2
   index-title-keywords:
@@ -27,3 +39,18 @@ wsjkw:
   daily-district-asymptomatic-regex: ([0-9]+)例本?土?无症状感染者
   daily-district-ignore-keywords:
     - 已对相关居住地
+  statistics:
+    flat-map:
+      separators:
+        - 、
+      prefixes:
+        - 华亭镇
+        - 南翔镇
+        - 嘉定工业区
+        - 嘉定镇街道
+        - 外冈镇
+        - 安亭镇
+        - 徐行镇
+        - 江桥镇
+        - 真新街道
+        - 马陆镇

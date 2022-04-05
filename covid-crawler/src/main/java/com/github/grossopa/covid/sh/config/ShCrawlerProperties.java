@@ -24,10 +24,12 @@
 
 package com.github.grossopa.covid.sh.config;
 
+import com.github.grossopa.covid.sh.config.properties.StatisticsProperties;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -48,4 +50,16 @@ public class ShCrawlerProperties {
     private String dailyDistrictConfirmedRegex;
     private String dailyDistrictAsymptomaticRegex;
     private List<String> dailyDistrictIgnoreKeywords;
+
+    private DailyV2 dailyV2;
+
+    private StatisticsProperties statistics;
+
+    @Data
+    @Configuration
+    @ConfigurationProperties
+    public static class DailyV2 {
+        private Date effectiveDate;
+    }
+
 }

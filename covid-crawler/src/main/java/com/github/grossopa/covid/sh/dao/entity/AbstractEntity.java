@@ -24,7 +24,8 @@
 
 package com.github.grossopa.covid.sh.dao.entity;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -36,7 +37,8 @@ import static javax.persistence.GenerationType.IDENTITY;
  * @author Jack Yin
  * @since 1.0
  */
-@Data
+@Getter
+@Setter
 @MappedSuperclass
 public abstract class AbstractEntity {
     @Id

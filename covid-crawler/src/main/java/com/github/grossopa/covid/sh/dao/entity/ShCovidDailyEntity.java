@@ -24,8 +24,8 @@
 
 package com.github.grossopa.covid.sh.dao.entity;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -37,8 +37,8 @@ import static javax.persistence.CascadeType.ALL;
  * @author Jack Yin
  * @since 1.0
  */
-@Data
-@EqualsAndHashCode(callSuper = true)
+@Getter
+@Setter
 @Entity
 @Table(name = "sh_covid_daily")
 public class ShCovidDailyEntity extends AbstractAuditedEntity {
@@ -49,7 +49,7 @@ public class ShCovidDailyEntity extends AbstractAuditedEntity {
     private String url;
 
     @OneToMany(cascade = ALL)
-    @JoinColumn(name = "sh_covid_daily_district_id")
+    @JoinColumn(name = "sh_covid_daily_id")
     private List<ShCovidDailyDistrictEntity> districts;
 
 }

@@ -22,36 +22,32 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.github.grossopa.covid;
+package com.github.grossopa.covid.amap.model;
 
-import com.github.grossopa.covid.sh.service.ShCovidService;
-import com.github.grossopa.covid.sh.service.StatisticsService;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ArrayUtils;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.context.ConfigurableApplicationContext;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.CollectionUtils;
+
+import java.util.List;
 
 /**
- * To crawl the information and stores in CSV
- *
  * @author Jack Yin
  * @since 1.0
  */
-@Slf4j
-@SpringBootApplication
-public class CovidCrawlerApplication {
+@Data
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class GeoCodeResult {
+    public static final String STATUS_SUCCESS = "1";
 
+    private String status;
+    private String info;
+    private String infoCode;
+    private String count;
 
-    public static void main(String[] args) {
-        SpringApplicationBuilder builder = new SpringApplicationBuilder(CovidCrawlerApplication.class);
-        SpringApplication application = builder.build();
-        ConfigurableApplicationContext context = application.run(
-                ArrayUtils.add(args, "--spring.config.location=classpath:/application.yaml,file:./secrets/amap.yaml"));
+    private List<GeoCode> geocodes;
 
-        context.getBean(ShCovidService.class).collectData();
-        context.getBean(ShCovidService.class).refreshLocations();
-        context.getBean(StatisticsService.class).updateAll();
+    public boolean isSuccessful() {
+        return StringUtils.equals(STATUS_SUCCESS, status) && !CollectionUtils.isEmpty(geocodes);
     }
 }

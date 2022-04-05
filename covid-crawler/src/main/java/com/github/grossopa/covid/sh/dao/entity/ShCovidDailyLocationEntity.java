@@ -24,20 +24,60 @@
 
 package com.github.grossopa.covid.sh.dao.entity;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * @author Jack Yin
  * @since 1.0
  */
-@Data
-@EqualsAndHashCode(callSuper = true)
+@Getter
+@Setter
 @Entity
-@Table(name = "sh_covid_daily_location")
+@Table(name = "sh_covid_daily_location", indexes = {@Index(name = "idx_name", columnList = "name")})
 public class ShCovidDailyLocationEntity extends AbstractAuditedEntity {
+
     @Column(name = "name", length = 1000, nullable = false)
     private String name;
+
+    @Column(name = "amap_adcode", length = 50)
+    private String amapAdcode;
+
+    @Column(name = "amap_level", length = 50)
+    private String amapLevel;
+
+    @Column(name = "amap_street", length = 1000)
+    private String amapStreet;
+
+    @Column(name = "amap_latitude")
+    private BigDecimal amapLatitude;
+
+    @Column(name = "amap_longitude")
+    private BigDecimal amapLongitude;
+
+    @Column(name = "amap_status", length = 50)
+    private String amapStatus;
+
+    @Column(name = "amap_info", length = 50)
+    private String amapInfo;
+
+    @Column(name = "sh_covid_daily_district_id", updatable = false, insertable = false)
+    private Long dailyDistrictId;
+
+    @ManyToOne
+    @JoinColumn(name = "sh_covid_daily_district_id")
+    private ShCovidDailyDistrictEntity dailyDistrict;
+
+    public static ShCovidDailyLocationEntity createSimple(String name, Date createTime,
+            ShCovidDailyDistrictEntity dailyDistrict) {
+        ShCovidDailyLocationEntity result = new ShCovidDailyLocationEntity();
+        result.setName(name);
+        result.initTime(createTime);
+        result.setDailyDistrict(dailyDistrict);
+        return result;
+    }
 }

@@ -22,36 +22,22 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.github.grossopa.covid;
+package com.github.grossopa.covid.sh.service.daily;
 
-import com.github.grossopa.covid.sh.service.ShCovidService;
-import com.github.grossopa.covid.sh.service.StatisticsService;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ArrayUtils;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.context.ConfigurableApplicationContext;
+import com.github.grossopa.covid.sh.model.CovidDaily;
+import com.github.grossopa.covid.sh.model.IndexPage;
+import org.springframework.core.Ordered;
+
+import java.util.Date;
+import java.util.List;
 
 /**
- * To crawl the information and stores in CSV
- *
  * @author Jack Yin
  * @since 1.0
  */
-@Slf4j
-@SpringBootApplication
-public class CovidCrawlerApplication {
+public interface DailyPageCrawler extends Ordered {
 
+    boolean canCrawl(Date date);
 
-    public static void main(String[] args) {
-        SpringApplicationBuilder builder = new SpringApplicationBuilder(CovidCrawlerApplication.class);
-        SpringApplication application = builder.build();
-        ConfigurableApplicationContext context = application.run(
-                ArrayUtils.add(args, "--spring.config.location=classpath:/application.yaml,file:./secrets/amap.yaml"));
-
-        context.getBean(ShCovidService.class).collectData();
-        context.getBean(ShCovidService.class).refreshLocations();
-        context.getBean(StatisticsService.class).updateAll();
-    }
+    CovidDaily crawl(Date date, IndexPage page, List<String> districts);
 }

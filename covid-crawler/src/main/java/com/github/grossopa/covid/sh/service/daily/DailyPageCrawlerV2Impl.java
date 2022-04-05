@@ -22,29 +22,27 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.github.grossopa.covid.sh.service;
+package com.github.grossopa.covid.sh.service.daily;
 
 import com.github.grossopa.covid.sh.config.ShCrawlerProperties;
-import com.github.grossopa.covid.sh.model.CovidDailyDistrict;
 import com.github.grossopa.covid.sh.model.CovidDaily;
+import com.github.grossopa.covid.sh.model.CovidDailyDistrict;
 import com.github.grossopa.covid.sh.model.IndexPage;
-import com.github.grossopa.covid.util.DateUtil;
 import com.github.grossopa.selenium.core.ComponentWebDriver;
-import com.github.grossopa.selenium.core.component.WebComponent;
 import com.github.grossopa.selenium.core.locator.By2;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.github.grossopa.selenium.core.locator.By2.xpathBuilder;
 import static com.google.common.collect.Lists.newArrayList;
-import static java.lang.Integer.parseInt;
-import static org.apache.commons.lang3.StringUtils.isBlank;
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.strip;
 
 /**
@@ -53,7 +51,8 @@ import static org.apache.commons.lang3.StringUtils.strip;
  */
 @Slf4j
 @Component
-public class DailyPageCrawler {
+@SuppressWarnings("unused")
+public class DailyPageCrawlerV2Impl implements DailyPageCrawler {
 
     @Autowired
     ShCrawlerProperties properties;
@@ -61,52 +60,49 @@ public class DailyPageCrawler {
     @Autowired
     ComponentWebDriver driver;
 
-    public CovidDaily crawl(IndexPage page, List<String> districts) {
-        Matcher matcher = Pattern.compile("([0-9]+)月([0-9]+)日").matcher(page.getTitle());
+    @Override
+    public boolean canCrawl(Date date) {
+        return date.after(properties.getDailyV2().getEffectiveDate());
+    }
 
+    @Override
+    public CovidDaily crawl(Date date, IndexPage page, List<String> districts) {
         Pattern districtConfirmedPattern = Pattern.compile(properties.getDailyDistrictConfirmedRegex());
         Pattern districtAsymptomaticPattern = Pattern.compile(properties.getDailyDistrictAsymptomaticRegex());
 
-        if (!matcher.find()) {
-            throw new RuntimeException("page date not found. " + page);
-        }
-        int month = parseInt(matcher.group(1));
-        int day = parseInt(matcher.group(2));
-
-        Calendar date = DateUtil.createBy(month, day);
-        log.info("The page date is : {}", DateUtil.formatDate(date));
-
         driver.navigate().to(page.getLink());
-        WebComponent container = driver.findComponent(By2.id("ivs_content"));
+        String fullText = driver.findComponent(By2.id("ivs_content")).getText();
+        List<String> lines = stream(fullText.split("\n")).map(StringUtils::strip).filter(StringUtils::isNotBlank)
+                .collect(toList());
 
-        List<WebComponent> pList = container.findComponents(xpathBuilder().relative("p").build());
         List<CovidDailyDistrict> result = newArrayList();
         String district = null;
         CovidDailyDistrict dailyDistrict;
         List<String> locations = null;
-        for (WebComponent p : pList) {
-            String text = strip(p.getText());
-            if (isBlank(text)) {
-                continue;
-            }
+        for (String text : lines) {
+            text = strip(text);
             if (districts.contains(text)) {
-                district = findDistricts(districts, text);
+                district = findDistrict(districts, text);
+                locations = newArrayList();
             } else if (properties.getDailyDistrictKeywords().stream().allMatch(text::contains)) {
                 Integer confirmed = findNumbers(text, districtConfirmedPattern);
                 Integer asymptomatic = findNumbers(text, districtAsymptomaticPattern);
-                locations = newArrayList();
                 dailyDistrict = new CovidDailyDistrict(district, confirmed, asymptomatic, locations);
                 result.add(dailyDistrict);
             } else if (locations != null && !isIgnored(text)) {
-                locations.add(text.replace("，", "").replace("。", ""));
+                locations.add(text.replaceAll("，$", "").replace("。", "").replaceAll("、$", "").replaceAll(",$", ""));
             }
-
         }
 
-        return new CovidDaily(date.getTime(), page.getLink(), result);
+        return new CovidDaily(date, page.getLink(), result);
     }
 
-    private String findDistricts(List<String> districts, String text) {
+    @Override
+    public int getOrder() {
+        return -20;
+    }
+
+    private String findDistrict(List<String> districts, String text) {
         return districts.stream().filter(text::contains).findFirst().orElseThrow();
     }
 
