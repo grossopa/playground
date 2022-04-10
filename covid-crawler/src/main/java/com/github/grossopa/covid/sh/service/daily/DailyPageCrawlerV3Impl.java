@@ -52,7 +52,7 @@ import static org.apache.commons.lang3.StringUtils.strip;
 @Slf4j
 @Component
 @SuppressWarnings("unused")
-public class DailyPageCrawlerV2Impl implements DailyPageCrawler {
+public class DailyPageCrawlerV3Impl implements DailyPageCrawler {
 
     @Autowired
     ShCrawlerProperties properties;
@@ -62,7 +62,7 @@ public class DailyPageCrawlerV2Impl implements DailyPageCrawler {
 
     @Override
     public boolean canCrawl(Date date) {
-        return date.after(properties.getDailyV2().getEffectiveDate());
+        return date.after(properties.getDailyV3().getEffectiveDate());
     }
 
     @Override
@@ -71,7 +71,11 @@ public class DailyPageCrawlerV2Impl implements DailyPageCrawler {
         Pattern districtAsymptomaticPattern = Pattern.compile(properties.getDailyDistrictAsymptomaticRegex());
 
         driver.navigate().to(page.getLink());
-        String fullText = driver.findComponent(By2.id("ivs_content")).getText();
+
+        driver.threadSleep(3000);
+
+        //        String fullText = driver.findComponent(By2.id("img-content")).getText();
+        String fullText = (String) driver.executeScript("return document.getElementById('img-content').innerText;");
         List<String> lines = stream(fullText.split("\n")).map(StringUtils::strip).filter(StringUtils::isNotBlank)
                 .collect(toList());
 
@@ -90,7 +94,8 @@ public class DailyPageCrawlerV2Impl implements DailyPageCrawler {
                 dailyDistrict = new CovidDailyDistrict(district, confirmed, asymptomatic, locations);
                 result.add(dailyDistrict);
             } else if (locations != null && !isIgnored(text)) {
-                locations.add(text.replaceAll("，$", "").replaceAll("。$", "").replaceAll("、$", "").replaceAll(",$", ""));
+                locations.add(text.replaceAll("\\s+$", "").replaceAll("，$", "").replaceAll("。$", "")
+                        .replaceAll("、$", "").replaceAll(",$", ""));
             }
         }
 
@@ -99,7 +104,7 @@ public class DailyPageCrawlerV2Impl implements DailyPageCrawler {
 
     @Override
     public int getOrder() {
-        return -20;
+        return -30;
     }
 
     private String findDistrict(List<String> districts, String text) {

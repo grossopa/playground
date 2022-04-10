@@ -51,14 +51,15 @@ public class ShCrawlerProperties {
     private String dailyDistrictAsymptomaticRegex;
     private List<String> dailyDistrictIgnoreKeywords;
 
-    private DailyV2 dailyV2;
+    private DailyVersions dailyV2;
+    private DailyVersions dailyV3;
 
     private StatisticsProperties statistics;
 
     @Data
     @Configuration
     @ConfigurationProperties
-    public static class DailyV2 {
+    public static class DailyVersions {
         private Date effectiveDate;
     }
 

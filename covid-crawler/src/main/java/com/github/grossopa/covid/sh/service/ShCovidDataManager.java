@@ -25,15 +25,19 @@
 package com.github.grossopa.covid.sh.service;
 
 import com.github.grossopa.covid.sh.dao.entity.ShCovidDailyDistrictEntity;
+import com.github.grossopa.covid.sh.dao.entity.ShCovidDailyEntity;
 import com.github.grossopa.covid.sh.dao.entity.ShCovidDailyLocationEntity;
 import com.github.grossopa.covid.sh.dao.entity.ShDistrictEntity;
 import com.github.grossopa.covid.sh.dao.repository.ShCovidDailyDistrictRepository;
+import com.github.grossopa.covid.sh.dao.repository.ShCovidDailyRepository;
 import com.github.grossopa.covid.sh.dao.repository.ShCovidLocationRepository;
 import com.github.grossopa.covid.sh.dao.repository.ShDistinctRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -61,8 +65,16 @@ public class ShCovidDataManager {
     @Autowired
     ShCovidLocationRepository locationRepository;
 
+    @Autowired
+    ShCovidDailyRepository dailyRepository;
+
     public List<String> findDistricts() {
-        return newArrayList(distinctRepository.findAll()).stream().map(ShDistrictEntity::getName).collect(toList());
+        return distinctRepository.findAll(Sort.by("id").ascending()).stream().map(ShDistrictEntity::getName)
+                .collect(toList());
+    }
+
+    public List<ShDistrictEntity> findDistrictEntities() {
+        return newArrayList(distinctRepository.findAll(Sort.by("id").ascending()));
     }
 
     public List<ShCovidDailyLocationEntity> findByMissingLocations() {
@@ -97,5 +109,13 @@ public class ShCovidDataManager {
     @Transactional(NOT_SUPPORTED)
     public void updateLocations(List<ShCovidDailyLocationEntity> locationEntities) {
         this.locationRepository.saveAll(locationEntities);
+    }
+
+    public List<ShCovidDailyDistrictEntity> findAllDailyDistricts() {
+        return newArrayList(this.dailyDistrictRepository.findAll());
+    }
+
+    public List<ShCovidDailyEntity> findAllDailyList() {
+        return newArrayList(this.dailyRepository.findAll(Sort.by(Sort.Order.asc("date"))));
     }
 }

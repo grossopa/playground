@@ -25,8 +25,11 @@
 package com.github.grossopa.covid.sh.dao.repository;
 
 import com.github.grossopa.covid.sh.dao.entity.ShDistrictEntity;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * @author Jack Yin
@@ -34,4 +37,6 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface ShDistinctRepository extends CrudRepository<ShDistrictEntity, Long> {
+
+    List<ShDistrictEntity> findAll(Sort sort);
 }

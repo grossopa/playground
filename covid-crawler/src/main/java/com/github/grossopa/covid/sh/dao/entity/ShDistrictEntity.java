@@ -43,4 +43,7 @@ public class ShDistrictEntity extends AbstractEntity {
 
     @Column(name = "name", length = 200, nullable = false, unique = true)
     private String name;
+
+    @Column(name = "population", nullable = false)
+    private Long population;
 }

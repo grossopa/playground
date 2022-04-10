@@ -51,6 +51,7 @@ public class CovidCrawlerApplication {
                 ArrayUtils.add(args, "--spring.config.location=classpath:/application.yaml,file:./secrets/amap.yaml"));
 
         context.getBean(ShCovidService.class).collectData();
+        context.getBean(StatisticsService.class).flatMapLocations();
         context.getBean(ShCovidService.class).refreshLocations();
         context.getBean(StatisticsService.class).updateAll();
     }

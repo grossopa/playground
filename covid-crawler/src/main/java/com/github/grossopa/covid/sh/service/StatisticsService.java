@@ -26,9 +26,9 @@ package com.github.grossopa.covid.sh.service;
 
 import com.github.grossopa.covid.sh.config.ShCrawlerProperties;
 import com.github.grossopa.covid.sh.config.properties.StatisticsProperties;
-import com.github.grossopa.covid.sh.dao.entity.ShCovidDailyLocationEntity;
-import com.github.grossopa.covid.sh.dao.entity.ShCovidStatisticsEntity;
+import com.github.grossopa.covid.sh.dao.entity.*;
 import com.github.grossopa.covid.sh.dao.repository.ShCovidStatisticsRepository;
+import com.github.grossopa.covid.util.DateUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -38,9 +38,15 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Maps.newLinkedHashMap;
+import static com.google.common.collect.Sets.newHashSet;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author Jack Yin
@@ -52,6 +58,8 @@ import static com.google.common.collect.Lists.newArrayList;
 public class StatisticsService {
 
     public static final String TYPE_APPEAR_TIMES = "APPEAR_TIMES";
+    public static final String TYPE_POPULATION_PERCENTAGE = "TYPE_POPULATION_PERCENTAGE";
+    public static final String TYPE_DAILY_NEW_LOCATIONS = "DAILY_NEW_LOCATIONS";
 
     @Autowired
     ShCovidStatisticsRepository repository;
@@ -62,12 +70,7 @@ public class StatisticsService {
     @Autowired
     ShCrawlerProperties properties;
 
-    public void updateAll() {
-        flatMapLocations();
-        updateAppearTimes(20);
-    }
-
-    private void flatMapLocations() {
+    public void flatMapLocations() {
         Date currentTime = new Date();
         StatisticsProperties.FlatMap flatMap = properties.getStatistics().getFlatMap();
         List<String> separators = flatMap.getSeparators();
@@ -91,6 +94,32 @@ public class StatisticsService {
         dataManager.updateLocations(existingLocations);
     }
 
+    public void updateAll() {
+        Date currentTime = new Date();
+        Map<Long, String> dailyDistrictToNameMap = dataManager.findDailyDistrictMapping();
+        List<ShCovidDailyLocationEntity> locationEntities = dataManager.findAllLocations();
+        updatePopulationPercentage();
+        updateAppearTimes(currentTime, 50, dailyDistrictToNameMap, locationEntities);
+        updateDailyNewLocations(currentTime, dailyDistrictToNameMap);
+    }
+
+    private void updatePopulationPercentage() {
+        repository.deleteByType(TYPE_POPULATION_PERCENTAGE);
+        Date currentTime = new Date();
+        Map<String, List<ShCovidDailyDistrictEntity>> dailyDistricts = dataManager.findAllDailyDistricts().stream()
+                .collect(groupingBy(dd -> dd.getDistrict().getName()));
+        List<ShDistrictEntity> districts = dataManager.findDistrictEntities();
+
+        List<ShCovidStatisticsEntity> statisticsEntities = districts.stream().map(district -> {
+            int sum = dailyDistricts.get(district.getName()).stream()
+                    .mapToInt(d -> d.getAsymptomatic() + d.getConfirmed()).sum();
+            return ShCovidStatisticsEntity.create(TYPE_POPULATION_PERCENTAGE, district.getName(), district.getName(),
+                    String.valueOf((double) sum / Double.valueOf(district.getPopulation())), currentTime);
+        }).collect(toList());
+
+        repository.saveAll(statisticsEntities);
+    }
+
     private List<ShCovidDailyLocationEntity> doFlatMap(String prefix, ShCovidDailyLocationEntity location,
             List<String> separators, Date currentTime) {
         String separatorsRegex = String.format("[%s]+", StringUtils.join(separators));
@@ -108,11 +137,10 @@ public class StatisticsService {
         return newEntities;
     }
 
-    private void updateAppearTimes(Integer topN) {
-        Map<Long, String> dailyDistrictToNameMap = dataManager.findDailyDistrictMapping();
-        List<ShCovidDailyLocationEntity> locationEntities = dataManager.findAllLocations();
+    public void updateAppearTimes(Date currentTime, Integer topN, Map<Long, String> dailyDistrictToNameMap,
+            List<ShCovidDailyLocationEntity> locationEntities) {
         Map<String, List<ShCovidDailyLocationEntity>> map = locationEntities.stream()
-                .collect(Collectors.groupingBy(l -> dailyDistrictToNameMap.get(l.getDailyDistrictId()) + l.getName()));
+                .collect(groupingBy(toFullName(dailyDistrictToNameMap)));
 
         PriorityQueue<AppearTimes> queue = new PriorityQueue<>(topN, Comparator.comparingInt(a -> a.count));
         map.forEach((key, value) -> {
@@ -123,20 +151,44 @@ public class StatisticsService {
         });
 
         repository.deleteByType(TYPE_APPEAR_TIMES);
-        Date currentTime = new Date();
-
-        List<ShCovidStatisticsEntity> statisticsEntities = queue.stream().map(at -> {
-            ShCovidStatisticsEntity entity = new ShCovidStatisticsEntity();
-            entity.setUpdateTime(currentTime);
-            entity.setCreateTime(currentTime);
-            entity.setType(TYPE_APPEAR_TIMES);
-            entity.setName(at.getName());
-            entity.setDisplayName(at.getName());
-            entity.setValue(String.valueOf(at.getCount()));
-            return entity;
-        }).collect(Collectors.toList());
+        List<ShCovidStatisticsEntity> statisticsEntities = queue.stream()
+                .map(at -> ShCovidStatisticsEntity.create(TYPE_APPEAR_TIMES, at.getName(), at.getName(),
+                        String.valueOf(at.getCount()), currentTime)).collect(toList());
 
         repository.saveAll(statisticsEntities);
+    }
+
+    public void updateDailyNewLocations(Date currentTime, Map<Long, String> dailyDistrictToNameMap) {
+        repository.deleteByType(TYPE_DAILY_NEW_LOCATIONS);
+
+        Set<String> existingLocationsMap = newHashSet();
+        List<ShCovidStatisticsEntity> statisticsEntities = newArrayList();
+        List<ShCovidDailyEntity> dailyList = dataManager.findAllDailyList();
+        for (ShCovidDailyEntity daily : dailyList) {
+            int[] count = new int[1];
+            List<String> newLocationList = newArrayList();
+            daily.getDistricts().stream().flatMap(d -> d.getLocations().stream()).forEach(loc -> {
+                String location = toFullName(dailyDistrictToNameMap).apply(loc);
+                if (existingLocationsMap.add(location)) {
+                    newLocationList.add(location);
+                    count[0]++;
+                }
+            });
+            String date = DateUtil.formatDate(daily.getDate());
+
+            ShCovidStatisticsEntity statisticsEntity = ShCovidStatisticsEntity.create(TYPE_DAILY_NEW_LOCATIONS, date,
+                    date, String.valueOf(count[0]), currentTime);
+
+            statisticsEntities.add(statisticsEntity);
+            log.info("New locations of {}: {}", date, StringUtils.join(newLocationList, ","));
+        }
+        repository.saveAll(statisticsEntities);
+
+
+    }
+
+    private Function<ShCovidDailyLocationEntity, String> toFullName(Map<Long, String> dailyDistrictToNameMap) {
+        return l -> dailyDistrictToNameMap.get(l.getDailyDistrictId()) + l.getName();
     }
 
     @Getter

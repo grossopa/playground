@@ -30,6 +30,7 @@ import lombok.Setter;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.util.Date;
 
 /**
  * @author Jack Yin
@@ -52,4 +53,16 @@ public class ShCovidStatisticsEntity extends AbstractAuditedEntity {
 
     @Column(name = "value", length = 100, nullable = false)
     private String value;
+
+    public static ShCovidStatisticsEntity create(String type, String name, String displayName, String value,
+            Date date) {
+        ShCovidStatisticsEntity entity = new ShCovidStatisticsEntity();
+        entity.setCreateTime(date);
+        entity.setUpdateTime(date);
+        entity.setType(type);
+        entity.setName(name);
+        entity.setDisplayName(displayName);
+        entity.setValue(value);
+        return entity;
+    }
 }

@@ -26,7 +26,9 @@ selenium:
   driver-url: http://localhost:38383
 wsjkw:
   daily-v2:
-      effective-date: 2022-03-30
+    effective-date: 2022-03-30
+  daily-v3:
+    effective-date: 2022-04-05
   index-page-url: https://wsjkw.sh.gov.cn/xwfb/index{0}.html
   index-max-page-size: 2
   index-title-keywords:
@@ -39,6 +41,9 @@ wsjkw:
   daily-district-asymptomatic-regex: ([0-9]+)例本?土?无症状感染者
   daily-district-ignore-keywords:
     - 已对相关居住地
+    - 编辑：
+    - 资料：
+    - 滑动查看更多
   statistics:
     flat-map:
       separators:
@@ -47,7 +52,7 @@ wsjkw:
         - 华亭镇
         - 南翔镇
         - 嘉定工业区
-        - 嘉定镇街道
+        - 嘉定镇街道n
         - 外冈镇
         - 安亭镇
         - 徐行镇

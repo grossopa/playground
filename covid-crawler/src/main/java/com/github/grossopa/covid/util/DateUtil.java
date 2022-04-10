@@ -28,6 +28,7 @@ import lombok.experimental.UtilityClass;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 import static java.util.Calendar.*;
 import static java.util.Calendar.MILLISECOND;
@@ -52,7 +53,10 @@ public class DateUtil {
     }
 
     public static String formatDate(Calendar calendar) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        return sdf.format(calendar.getTime());
+        return formatDate(calendar.getTime());
+    }
+
+    public static String formatDate(Date date) {
+        return new SimpleDateFormat("yyyy-MM-dd").format(date);
     }
 }

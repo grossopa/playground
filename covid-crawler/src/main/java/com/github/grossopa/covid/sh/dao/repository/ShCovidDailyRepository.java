@@ -25,8 +25,11 @@
 package com.github.grossopa.covid.sh.dao.repository;
 
 import com.github.grossopa.covid.sh.dao.entity.ShCovidDailyEntity;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * @author Jack Yin
@@ -34,4 +37,6 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface ShCovidDailyRepository extends CrudRepository<ShCovidDailyEntity, Long> {
+
+    List<ShCovidDailyEntity> findAll(Sort sort);
 }
