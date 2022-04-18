@@ -59,6 +59,11 @@ public class SeleniumConfig {
     @Autowired
     SeleniumProperties seleniumProperties;
 
+    /**
+     * Defines the Selenium driver configuration bean
+     *
+     * @return the Selenium driver configuration bean
+     */
     @Bean
     DriverConfig driverConfig() {
         DriverConfig config = new DriverConfig();
@@ -69,11 +74,25 @@ public class SeleniumConfig {
         return config;
     }
 
+    /**
+     * Defines the Selenium driver configuration service, the {@link DriverService#start()} may not be invoked if there
+     * is already a Selenium process running on the same port.
+     *
+     * @param config the driver configuration
+     * @return the Selenium driver configuration service
+     */
     @Bean
     DriverService driverService(DriverConfig config) {
         return config.getType().apply(new CreateDriverServiceAction(), config);
     }
 
+    /**
+     * Defines the root {@link ComponentWebDriver} bean of Selenium.
+     *
+     * @param config the driver configuration
+     * @param driverService the driver service either started as new or attached to existing running service
+     * @return the root {@link ComponentWebDriver} bean of Selenium.
+     */
     @Bean
     ComponentWebDriver webDriver(DriverConfig config, DriverService driverService) {
         start(driverService);
@@ -86,6 +105,11 @@ public class SeleniumConfig {
         return new DefaultComponentWebDriver(new InterceptingWebDriver(driver, new LoggingHandler(100L)));
     }
 
+    /**
+     * Tries to start the Selenium driver service. if the process is already running then doing nothing.
+     *
+     * @param driverService the driver service to start
+     */
     @SneakyThrows
     public void start(DriverService driverService) {
         if (isProcessAvailable()) {

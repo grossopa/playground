@@ -75,19 +75,24 @@ public class ShCovidService {
     AmapGeoClient amapGeoClient;
 
     public void collectData() {
-        List<IndexPage> pages = indexPageCrawler.crawlIndexPages();
+        collectData(indexPageCrawler.crawlIndexPages());
+    }
+
+
+    public void collectData(List<IndexPage> pages) {
+        List<String> districts = dataManager.findDistricts();
         List<String> existingUrls = dailyService.findExistingUrls();
         List<IndexPage> filteredPages = pages.stream().filter(indexDailyPagePredicate)
                 .filter(p -> !existingUrls.contains(p.getLink())).collect(toList());
 
         log.info("Found below new daily pages.\n{}", StringUtils.join(filteredPages, "\n"));
 
-        List<String> districts = dataManager.findDistricts();
         List<CovidDaily> dailyList = filteredPages.stream().map(ip -> dailyPageCrawler.crawl(ip, districts))
                 .collect(toList());
 
         dailyService.save(dailyList);
     }
+
 
     @Transactional
     public void refreshLocations() {

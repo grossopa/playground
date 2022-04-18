@@ -29,6 +29,8 @@ import lombok.Data;
 import java.util.List;
 
 /**
+ * the Statistics properties class
+ *
  * @author Jack Yin
  * @since 1.0
  */

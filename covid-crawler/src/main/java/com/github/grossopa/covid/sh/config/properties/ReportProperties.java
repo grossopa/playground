@@ -22,41 +22,23 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.github.grossopa.covid.amap.model;
+package com.github.grossopa.covid.sh.config.properties;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.CollectionUtils;
-
-import java.util.List;
 
 /**
- * the Geo code search result
+ * report related properties
  *
  * @author Jack Yin
  * @since 1.0
  */
 @Data
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class GeoCodeResult {
-    /**
-     * 1 for successful, others known failed code is 0
-     */
-    public static final String STATUS_SUCCESS = "1";
+public class ReportProperties {
 
-    private String status;
-    private String info;
-    private String infoCode;
-    private String count;
-    private List<GeoCode> geocodes;
+    private AmapLocation amapLocation;
 
-    /**
-     * Whether the result is successful or not by status code and geocodes present
-     *
-     * @return the result is successful or not by status code and geocodes present
-     */
-    public boolean isSuccessful() {
-        return StringUtils.equals(STATUS_SUCCESS, status) && !CollectionUtils.isEmpty(geocodes);
+    @Data
+    public static class AmapLocation {
+        private String filePath;
     }
 }

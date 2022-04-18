@@ -29,6 +29,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 /**
+ * The Selenium properties class
+ *
  * @author Jack Yin
  * @since 1.0
  */

@@ -22,32 +22,21 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.github.grossopa.covid.config;
+package com.github.grossopa.covid.sh.model;
 
-import org.springframework.boot.context.properties.ConfigurationPropertiesBinding;
-import org.springframework.core.convert.converter.Converter;
-import org.springframework.stereotype.Component;
-
-import javax.annotation.Nonnull;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 /**
+ * For Amap report heatmap with location and appear times
+ *
  * @author Jack Yin
  * @since 1.0
  */
-@Component
-@ConfigurationPropertiesBinding
-@SuppressWarnings("unused")
-public class DateConverter implements Converter<String, Date> {
-
-    @Override
-    public Date convert(@Nonnull String source) {
-        try {
-            return new SimpleDateFormat("yyyy-MM-dd").parse(source);
-        } catch (ParseException e) {
-            throw new IllegalArgumentException(e);
-        }
-    }
+@Data
+@AllArgsConstructor
+public class AmapLocationReportRow {
+    private String name;
+    private Integer count = 0;
+    private String geoLocation;
 }

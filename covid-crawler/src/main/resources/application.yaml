@@ -11,6 +11,8 @@ spring:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
       ddl-auto: update
+      jdbc:
+        time-zone: UTC
 logging:
   level:
     root: info
@@ -59,3 +61,6 @@ wsjkw:
         - 江桥镇
         - 真新街道
         - 马陆镇
+  report:
+    amap-location:
+      file-path: C:/Users/Jack/Desktop/统计

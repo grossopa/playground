@@ -26,20 +26,18 @@ package com.github.grossopa.covid.amap.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import lombok.Data;
 
-import java.util.List;
-
-import static org.apache.commons.lang3.StringUtils.join;
-
 /**
+ * The Geo code of Geo search response.
+ *
  * @author Jack Yin
  * @since 1.0
  */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
+@SuppressWarnings("unused")
 public class GeoCode {
 
     private String location;
@@ -51,16 +49,31 @@ public class GeoCode {
     @JsonIgnore
     private String level;
 
+    /**
+     * Sets the street value as object, the JSON result will be either string value or empty array [].
+     *
+     * @param street the street value to set, either string or empty array.
+     */
     @JsonSetter("street")
     public void setStreet(Object street) {
         this.street = street instanceof String ? String.valueOf(street) : "";
     }
 
+    /**
+     * Sets the level value as object, the JSON result will be either string value or empty array [].
+     *
+     * @param level the level value to set, either string or empty array.
+     */
     @JsonSetter("level")
     public void setLevel(Object level) {
         this.level = level instanceof String ? String.valueOf(level) : "";
     }
 
+    /**
+     * Sets the adcode value as object, the JSON result will be either string value or empty array [].
+     *
+     * @param adcode the level value to set, either string or empty array.
+     */
     @JsonSetter("adcode")
     public void setAdcode(Object adcode) {
         this.adcode = adcode instanceof String ? String.valueOf(adcode) : "";

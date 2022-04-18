@@ -24,6 +24,7 @@
 
 package com.github.grossopa.covid.sh.config;
 
+import com.github.grossopa.covid.sh.config.properties.ReportProperties;
 import com.github.grossopa.covid.sh.config.properties.StatisticsProperties;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -33,7 +34,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * the configuration
+ * The main crawler configuration
  *
  * @author Jack Yin
  * @since 1.0
@@ -55,7 +56,14 @@ public class ShCrawlerProperties {
     private DailyVersions dailyV3;
 
     private StatisticsProperties statistics;
+    private ReportProperties report;
 
+    /**
+     * Daily versions inner class
+     *
+     * @author Jack Yin
+     * @since 1.0
+     */
     @Data
     @Configuration
     @ConfigurationProperties

@@ -31,8 +31,6 @@ import java.util.Calendar;
 import java.util.Date;
 
 import static java.util.Calendar.*;
-import static java.util.Calendar.MILLISECOND;
-import static java.util.TimeZone.getTimeZone;
 
 /**
  * @author Jack Yin
@@ -42,7 +40,7 @@ import static java.util.TimeZone.getTimeZone;
 public class DateUtil {
 
     public static Calendar createBy(int month, int day) {
-        Calendar calendar = Calendar.getInstance(getTimeZone("GMT+:00:00"));
+        Calendar calendar = Calendar.getInstance();
         calendar.set(MONTH, month - 1);
         calendar.set(DAY_OF_MONTH, day);
         calendar.set(HOUR, 0);
@@ -58,5 +56,9 @@ public class DateUtil {
 
     public static String formatDate(Date date) {
         return new SimpleDateFormat("yyyy-MM-dd").format(date);
+    }
+
+    public static String formatDateMMdd(Date date) {
+        return new SimpleDateFormat("MM-dd").format(date);
     }
 }

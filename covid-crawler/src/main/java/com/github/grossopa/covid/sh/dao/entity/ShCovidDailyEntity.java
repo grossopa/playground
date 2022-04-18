@@ -48,6 +48,21 @@ public class ShCovidDailyEntity extends AbstractAuditedEntity {
     @Column(name = "url", length = 1000, nullable = false)
     private String url;
 
+    @Column(name = "summaryUrl", length = 1000)
+    private String summaryUrl;
+
+    @Column(name = "confirmed")
+    private Integer confirmed;
+
+    @Column(name = "asymptomatic")
+    private Integer asymptomatic;
+
+    @Column(name = "closedLoopConfirmed")
+    private Integer closedLoopConfirmed;
+
+    @Column(name = "closedLoopAsymptomatic")
+    private Integer closedLoopAsymptomatic;
+
     @OneToMany(cascade = ALL)
     @JoinColumn(name = "sh_covid_daily_id")
     private List<ShCovidDailyDistrictEntity> districts;

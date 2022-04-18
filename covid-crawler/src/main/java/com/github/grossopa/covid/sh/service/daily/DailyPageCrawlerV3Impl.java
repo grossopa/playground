@@ -44,6 +44,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.strip;
+import static org.apache.commons.lang3.StringUtils.trim;
 
 /**
  * @author Jack Yin
@@ -84,7 +85,7 @@ public class DailyPageCrawlerV3Impl implements DailyPageCrawler {
         CovidDailyDistrict dailyDistrict;
         List<String> locations = null;
         for (String text : lines) {
-            text = strip(text);
+            text = trim(strip(text));
             if (districts.contains(text)) {
                 district = findDistrict(districts, text);
                 locations = newArrayList();
@@ -94,8 +95,9 @@ public class DailyPageCrawlerV3Impl implements DailyPageCrawler {
                 dailyDistrict = new CovidDailyDistrict(district, confirmed, asymptomatic, locations);
                 result.add(dailyDistrict);
             } else if (locations != null && !isIgnored(text)) {
-                locations.add(text.replaceAll("\\s+$", "").replaceAll("，$", "").replaceAll("。$", "")
-                        .replaceAll("、$", "").replaceAll(",$", ""));
+                locations.add(
+                        text.replaceAll(" ", "").replaceAll("\\s+$", "").replaceAll("\\t+$", "").replaceAll("，$", "")
+                                .replaceAll("。$", "").replaceAll("、$", "").replaceAll(",$", ""));
             }
         }
 

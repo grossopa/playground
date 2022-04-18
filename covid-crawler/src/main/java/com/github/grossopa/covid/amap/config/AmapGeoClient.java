@@ -34,6 +34,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import static org.springframework.web.util.UriComponentsBuilder.fromPath;
 
 /**
+ * The Amap Geo API client
+ *
  * @author Jack Yin
  * @since 1.0
  */
@@ -47,6 +49,12 @@ public class AmapGeoClient {
     @Qualifier("amapRestTemplate")
     RestTemplate restTemplate;
 
+    /**
+     * Searches the geo details by address
+     *
+     * @param address the address to find
+     * @return the geo search result
+     */
     public GeoCodeResult searchGeo(String address) {
         UriComponentsBuilder builder = createDefaultParams();
         builder.queryParam("address", address);

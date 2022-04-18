@@ -28,7 +28,6 @@ import com.github.grossopa.covid.sh.config.ShCrawlerProperties;
 import com.github.grossopa.covid.sh.config.properties.StatisticsProperties;
 import com.github.grossopa.covid.sh.dao.entity.*;
 import com.github.grossopa.covid.sh.dao.repository.ShCovidStatisticsRepository;
-import com.github.grossopa.covid.util.DateUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -39,11 +38,9 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
+import static com.github.grossopa.covid.util.DateUtil.formatDateMMdd;
 import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Maps.newHashMap;
-import static com.google.common.collect.Maps.newLinkedHashMap;
 import static com.google.common.collect.Sets.newHashSet;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
@@ -174,7 +171,7 @@ public class StatisticsService {
                     count[0]++;
                 }
             });
-            String date = DateUtil.formatDate(daily.getDate());
+            String date = formatDateMMdd(daily.getDate());
 
             ShCovidStatisticsEntity statisticsEntity = ShCovidStatisticsEntity.create(TYPE_DAILY_NEW_LOCATIONS, date,
                     date, String.valueOf(count[0]), currentTime);

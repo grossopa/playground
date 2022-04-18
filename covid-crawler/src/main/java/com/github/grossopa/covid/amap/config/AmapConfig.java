@@ -31,6 +31,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
 /**
+ * Amap Root configuration
+ *
  * @author Jack Yin
  * @since 1.0
  */
@@ -38,11 +40,8 @@ import org.springframework.web.client.RestTemplate;
 @SuppressWarnings("unused")
 public class AmapConfig {
 
-    @Autowired
-    AmapProperties amapProperties;
-
     @Bean(name = "amapRestTemplate")
-    public RestTemplate amapRestTemplate() {
+    public RestTemplate amapRestTemplate(@Autowired AmapProperties amapProperties) {
         RestTemplateBuilder builder = new RestTemplateBuilder();
         return builder.rootUri(amapProperties.getBaseUrl()).build();
     }

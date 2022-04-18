@@ -22,16 +22,32 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.github.grossopa.covid.config;
+package com.github.grossopa.covid.util;
 
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.context.properties.ConfigurationPropertiesBinding;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.Nonnull;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * @author Jack Yin
  * @since 1.0
  */
-@Configuration
+@Component
+@ConfigurationPropertiesBinding
 @SuppressWarnings("unused")
-public class CovidCrawlerConfig {
+public class DateConverter implements Converter<String, Date> {
 
+    @Override
+    public Date convert(@Nonnull String source) {
+        try {
+            return new SimpleDateFormat("yyyy-MM-dd").parse(source);
+        } catch (ParseException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
 }

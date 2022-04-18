@@ -28,6 +28,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.List;
 
 import static javax.persistence.CascadeType.ALL;
@@ -50,6 +51,12 @@ public class ShCovidDailyDistrictEntity extends AbstractAuditedEntity {
 
     @Column(name = "asymptomatic", nullable = false)
     private Integer asymptomatic;
+
+    @Column(name = "pre_ten_thousands")
+    private Integer perTenThousands;
+
+    @Column(name = "new_location")
+    private Integer newLocation;
 
     @OneToMany(cascade = ALL, mappedBy = "dailyDistrict")
     private List<ShCovidDailyLocationEntity> locations;
