@@ -1,0 +1,82 @@
+spring:
+  main:
+    web-application-type: none
+  config:
+    location: file:./secrets/amap.yaml
+  datasource:
+    url: jdbc:mysql://localhost:3306/covid_crawler
+    username: root
+    password:
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: update
+      jdbc:
+        time-zone: UTC
+logging:
+  level:
+    root: info
+amap:
+  base-url: https://restapi.amap.com/v3
+  geo-request:
+    default-city: 上海
+    default-output: JSON
+selenium:
+  executable-path: D:\software\drivers\msedgedriver-101.exe
+  driver-version: 99.0.1150.55
+  port: 38383
+  driver-url: http://localhost:38383
+wsjkw:
+  daily-v2:
+    effective-date: 2022-03-30
+    daily-district-confirmed-regex: ([0-9]+)例本土(新冠)?(肺炎)?确诊病例
+    daily-district-asymptomatic-regex: ([0-9]+)例本土无症状感染者
+    daily-district-ignore-keywords:
+      - 已对相关居住地
+      - 编辑：
+      - 资料：
+      - 滑动查看更多
+  daily-v3:
+    effective-date: 2022-04-05
+    summary-regexes:
+     # - "新增本土新冠肺炎确诊病例([0-9]+)例和无症状感染者([0-9]+)例\\S+，([0-9]+)例确诊病例和([0-9]+)例无症状感染者在隔离管控中发现"
+     # - "新增本土新冠肺炎确诊病例([0-9]+)\\S+既往无症状感染者转为确诊病例([0-9]+)例）和无症状感染者([0-9]+)例，([0-9]+)例确诊病例和([0-9]+)例无症状感染者在隔离管控中发现"
+      - "新增本土新冠肺炎确诊病例([0-9]+)和无症状感染者([0-9]+)例，其中([0-9]+)例确诊病例为既往无症状感染者转归，([0-9]+)例确诊病例和([0-9]+)例无症状感染者在隔离管控中发现"
+      - "新增本土新冠肺炎确诊病例([0-9]+)例和无症状感染者([0-9]+)例，其中([0-9]+)例确诊病例为既往无症状感染者转归，([0-9]+)例确诊病例和([0-9]+)例无症状感染者在隔离管控中发现"
+    title-regex: "[0-9]{2,4}年[0-9]{1,2}月[0-9]{1,2}日，(\\S){2,3}区"
+    confirmed-regexes:
+      - ([0-9]+)例(本土)?(新冠肺炎)?(本土)?确诊病例
+      - 确诊病例([0-9]+)例
+    asymptomatic-regexes:
+      - ([0-9]+)例(本土)?无症状感染者
+      - 无症状感染者([0-9]+)例
+    ignore-keywords:
+      - 已对相关居住地
+      - 编辑：
+      - 资料：
+      - 滑动查看更多
+  index-page-url: https://wsjkw.sh.gov.cn/xwfb/index{0}.html
+  index-max-page-size: 2
+  index-title-keywords:
+    - 本市各区
+    - 居住地
+  index-sleep-ms: 3000
+
+  statistics:
+    flat-map:
+      separators:
+        - 、
+      prefixes:
+        - 华亭镇
+        - 南翔镇
+        - 嘉定工业区
+        - 嘉定镇街道n
+        - 外冈镇
+        - 安亭镇
+        - 徐行镇
+        - 江桥镇
+        - 真新街道
+        - 马陆镇
+  report:
+    amap-location:
+      file-path: C:/Users/Jack/Desktop/统计
