@@ -28,7 +28,6 @@ import com.github.grossopa.covid.sh.model.IndexPage;
 import com.github.grossopa.covid.sh.service.ReportService;
 import com.github.grossopa.covid.sh.service.ShCovidService;
 import com.github.grossopa.covid.sh.service.StatisticsService;
-import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.boot.SpringApplication;
@@ -36,7 +35,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import static com.google.common.collect.Lists.newArrayList;
+import java.util.Collections;
 
 /**
  * To crawl the information and stores in CSV
@@ -54,9 +53,15 @@ public class CovidCrawlerApplication {
         SpringApplication application = builder.build();
         ConfigurableApplicationContext context = application.run(
                 ArrayUtils.add(args, "--spring.config.location=classpath:/application.yaml,file:./secrets/amap.yaml"));
+
+        // uncomment below code for scanning all updates
         context.getBean(ShCovidService.class).collectData();
-//        context.getBean(ShCovidService.class).collectData(newArrayList(
-//                new IndexPage("4月9日（0-24时）本市各区确诊病例、无症状感染者居住地信息", "https://mp.weixin.qq.com/s/_Je5_5_HqBcs5chvH5SFfA")));
+
+        // uncomment below code with the URL for scanning one particular article
+//        context.getBean(ShCovidService.class).collectData(Collections.singletonList(
+//                new IndexPage("5月30日（0-24时）本市各区确诊病例、无症状感染者居住地信息",
+//                        "https://mp.weixin.qq.com/s/1AsoUPz51QTmNUPItNUCFg")));
+
         context.getBean(StatisticsService.class).flatMapLocations();
         context.getBean(ShCovidService.class).refreshLocations();
         context.getBean(StatisticsService.class).updateAll();

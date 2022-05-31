@@ -47,13 +47,11 @@ public class ShCrawlerProperties {
     private Integer indexMaxPageSize;
     private List<String> indexTitleKeywords;
     private Long indexSleepMs;
-    private List<String> dailyDistrictKeywords;
-    private String dailyDistrictConfirmedRegex;
-    private String dailyDistrictAsymptomaticRegex;
-    private List<String> dailyDistrictIgnoreKeywords;
 
-    private DailyVersions dailyV2;
-    private DailyVersions dailyV3;
+
+
+    private DailyV2 dailyV2;
+    private DailyV3 dailyV3;
 
     private StatisticsProperties statistics;
     private ReportProperties report;
@@ -67,8 +65,24 @@ public class ShCrawlerProperties {
     @Data
     @Configuration
     @ConfigurationProperties
-    public static class DailyVersions {
+    public static class DailyV2 {
         private Date effectiveDate;
+        private String dailyDistrictConfirmedRegex;
+        private String dailyDistrictAsymptomaticRegex;
+        private List<String> dailyDistrictKeywords;
+        private List<String> dailyDistrictIgnoreKeywords;
+    }
+
+    @Data
+    @Configuration
+    @ConfigurationProperties
+    public static class DailyV3 {
+        private Date effectiveDate;
+        private String titleRegex;
+        private List<String> summaryRegexes;
+        private List<String> confirmedRegexes;
+        private List<String> asymptomaticRegexes;
+        private List<String> ignoreKeywords;
     }
 
 }

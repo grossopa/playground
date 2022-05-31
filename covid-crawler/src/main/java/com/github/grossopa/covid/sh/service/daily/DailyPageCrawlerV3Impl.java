@@ -29,12 +29,12 @@ import com.github.grossopa.covid.sh.model.CovidDaily;
 import com.github.grossopa.covid.sh.model.CovidDailyDistrict;
 import com.github.grossopa.covid.sh.model.IndexPage;
 import com.github.grossopa.selenium.core.ComponentWebDriver;
-import com.github.grossopa.selenium.core.locator.By2;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -43,8 +43,8 @@ import java.util.regex.Pattern;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toUnmodifiableList;
 import static org.apache.commons.lang3.StringUtils.strip;
-import static org.apache.commons.lang3.StringUtils.trim;
 
 /**
  * @author Jack Yin
@@ -61,6 +61,25 @@ public class DailyPageCrawlerV3Impl implements DailyPageCrawler {
     @Autowired
     ComponentWebDriver driver;
 
+    List<Pattern> summaryPatterns;
+
+    Pattern districtTitlePattern;
+
+    List<Pattern> districtConfirmedPatterns;
+    List<Pattern> districtAsymptomaticPatterns;
+
+
+    @PostConstruct
+    public void init() {
+        ShCrawlerProperties.DailyV3 dailyV3 = properties.getDailyV3();
+        summaryPatterns = dailyV3.getSummaryRegexes().stream().map(Pattern::compile).collect(toUnmodifiableList());
+        districtTitlePattern = Pattern.compile(dailyV3.getTitleRegex());
+        districtConfirmedPatterns = dailyV3.getConfirmedRegexes().stream().map(Pattern::compile)
+                .collect(toUnmodifiableList());
+        districtAsymptomaticPatterns = dailyV3.getAsymptomaticRegexes().stream().map(Pattern::compile)
+                .collect(toUnmodifiableList());
+    }
+
     @Override
     public boolean canCrawl(Date date) {
         return date.after(properties.getDailyV3().getEffectiveDate());
@@ -68,32 +87,59 @@ public class DailyPageCrawlerV3Impl implements DailyPageCrawler {
 
     @Override
     public CovidDaily crawl(Date date, IndexPage page, List<String> districts) {
-        Pattern districtConfirmedPattern = Pattern.compile(properties.getDailyDistrictConfirmedRegex());
-        Pattern districtAsymptomaticPattern = Pattern.compile(properties.getDailyDistrictAsymptomaticRegex());
-
         driver.navigate().to(page.getLink());
-
         driver.threadSleep(3000);
 
-        //        String fullText = driver.findComponent(By2.id("img-content")).getText();
-        String fullText = (String) driver.executeScript("return document.getElementById('img-content').innerText;");
+        String fullText = (String) driver.executeScript("return document.getElementById('js_content').innerText;");
+        return parseResult(fullText, districts, date, page);
+    }
+
+    CovidDaily parseResult(String fullText, List<String> districts, Date date, IndexPage page) {
         List<String> lines = stream(fullText.split("\n")).map(StringUtils::strip).filter(StringUtils::isNotBlank)
                 .collect(toList());
+        int confirmed = 0;
+        int asymptomatic = 0;
+        int closedLoopConverted = 0;
+        int closedLoopConfirmed = 0;
+        int closedLoopAsymptomatic = 0;
+        while (!lines.isEmpty() && confirmed == 0 && asymptomatic == 0 && closedLoopConfirmed == 0 && closedLoopAsymptomatic == 0) {
+            String line = lines.remove(0);
+            for (Pattern pattern : this.summaryPatterns) {
+                Matcher matcher = pattern.matcher(line);
+                if (matcher.find()) {
+                    confirmed = Integer.parseInt(matcher.group(1));
+                    asymptomatic = Integer.parseInt(matcher.group(2));
+                    closedLoopConverted = Integer.parseInt(matcher.group(3));
+                    closedLoopConfirmed = Integer.parseInt(matcher.group(4));
+                    closedLoopAsymptomatic = Integer.parseInt(matcher.group(5));
+                    break;
+                }
+            }
+        }
 
+        List<CovidDailyDistrict> result = parseDailyDistricts(lines, districts);
+        return new CovidDaily(date, page.getLink(), confirmed, asymptomatic, closedLoopConverted, closedLoopConfirmed,
+                closedLoopAsymptomatic, result);
+    }
+
+
+    List<CovidDailyDistrict> parseDailyDistricts(List<String> lines, List<String> districts) {
         List<CovidDailyDistrict> result = newArrayList();
-        String district = null;
-        CovidDailyDistrict dailyDistrict;
         List<String> locations = null;
         for (String text : lines) {
-            text = trim(strip(text));
+            text = strip(text);
             if (districts.contains(text)) {
-                district = findDistrict(districts, text);
+                // skip the district information
+                continue;
+            }
+
+            Matcher matcher = districtTitlePattern.matcher(text);
+            if (matcher.find()) {
+                String district = districts.stream().filter(text::contains).findFirst().orElseThrow();
+                Integer confirmed = findNumbers(text, districtConfirmedPatterns);
+                Integer asymptomatic = findNumbers(text, districtAsymptomaticPatterns);
                 locations = newArrayList();
-            } else if (properties.getDailyDistrictKeywords().stream().allMatch(text::contains)) {
-                Integer confirmed = findNumbers(text, districtConfirmedPattern);
-                Integer asymptomatic = findNumbers(text, districtAsymptomaticPattern);
-                dailyDistrict = new CovidDailyDistrict(district, confirmed, asymptomatic, locations);
-                result.add(dailyDistrict);
+                result.add(new CovidDailyDistrict(district, confirmed, asymptomatic, locations));
             } else if (locations != null && !isIgnored(text)) {
                 locations.add(
                         text.replaceAll(" ", "").replaceAll("\\s+$", "").replaceAll("\\t+$", "").replaceAll("，$", "")
@@ -101,7 +147,7 @@ public class DailyPageCrawlerV3Impl implements DailyPageCrawler {
             }
         }
 
-        return new CovidDaily(date, page.getLink(), result);
+        return result;
     }
 
     @Override
@@ -114,15 +160,17 @@ public class DailyPageCrawlerV3Impl implements DailyPageCrawler {
     }
 
     private boolean isIgnored(String text) {
-        return properties.getDailyDistrictIgnoreKeywords().stream().anyMatch(text::contains);
+        return properties.getDailyV3().getIgnoreKeywords().stream().anyMatch(text::contains);
     }
 
-    private Integer findNumbers(String text, Pattern pattern) {
-        Matcher matcher = pattern.matcher(text);
-        if (!matcher.find()) {
-            return 0;
-        } else {
-            return Integer.parseInt(matcher.group(1));
+    private Integer findNumbers(String text, List<Pattern> patterns) {
+        int result = 0;
+        for (Pattern pattern : patterns) {
+            Matcher matcher = pattern.matcher(text);
+            if (matcher.find()) {
+                result = Integer.parseInt(matcher.group(1));
+            }
         }
+        return result;
     }
 }

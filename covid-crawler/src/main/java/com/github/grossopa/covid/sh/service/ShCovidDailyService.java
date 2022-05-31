@@ -72,6 +72,11 @@ public class ShCovidDailyService {
             dailyEntity.setUrl(d.getUrl());
             dailyEntity.setCreateTime(currentTime);
             dailyEntity.setUpdateTime(currentTime);
+            dailyEntity.setConfirmed(d.getConfirmed());
+            dailyEntity.setAsymptomatic(d.getAsymptomatic());
+            dailyEntity.setClosedLoopConverted(d.getClosedLoopConverted());
+            dailyEntity.setClosedLoopConfirmed(d.getClosedLoopConfirmed());
+            dailyEntity.setClosedLoopAsymptomatic(d.getClosedLoopAsymptomatic());
 
             List<ShCovidDailyDistrictEntity> districts = d.getDailyDistricts().stream().map(dist -> {
                 ShCovidDailyDistrictEntity dailyDistrictEntity = new ShCovidDailyDistrictEntity();

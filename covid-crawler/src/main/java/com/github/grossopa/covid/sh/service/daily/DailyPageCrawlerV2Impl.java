@@ -67,8 +67,9 @@ public class DailyPageCrawlerV2Impl implements DailyPageCrawler {
 
     @Override
     public CovidDaily crawl(Date date, IndexPage page, List<String> districts) {
-        Pattern districtConfirmedPattern = Pattern.compile(properties.getDailyDistrictConfirmedRegex());
-        Pattern districtAsymptomaticPattern = Pattern.compile(properties.getDailyDistrictAsymptomaticRegex());
+        Pattern districtConfirmedPattern = Pattern.compile(properties.getDailyV2().getDailyDistrictConfirmedRegex());
+        Pattern districtAsymptomaticPattern = Pattern.compile(
+                properties.getDailyV2().getDailyDistrictAsymptomaticRegex());
 
         driver.navigate().to(page.getLink());
         String fullText = driver.findComponent(By2.id("ivs_content")).getText();
@@ -84,7 +85,7 @@ public class DailyPageCrawlerV2Impl implements DailyPageCrawler {
             if (districts.contains(text)) {
                 district = findDistrict(districts, text);
                 locations = newArrayList();
-            } else if (properties.getDailyDistrictKeywords().stream().allMatch(text::contains)) {
+            } else if (properties.getDailyV2().getDailyDistrictKeywords().stream().allMatch(text::contains)) {
                 Integer confirmed = findNumbers(text, districtConfirmedPattern);
                 Integer asymptomatic = findNumbers(text, districtAsymptomaticPattern);
                 dailyDistrict = new CovidDailyDistrict(district, confirmed, asymptomatic, locations);
@@ -94,7 +95,7 @@ public class DailyPageCrawlerV2Impl implements DailyPageCrawler {
             }
         }
 
-        return new CovidDaily(date, page.getLink(), result);
+        return new CovidDaily(date, page.getLink(), 0, 0,0, 0, 0, result);
     }
 
     @Override
@@ -107,7 +108,7 @@ public class DailyPageCrawlerV2Impl implements DailyPageCrawler {
     }
 
     private boolean isIgnored(String text) {
-        return properties.getDailyDistrictIgnoreKeywords().stream().anyMatch(text::contains);
+        return properties.getDailyV2().getDailyDistrictIgnoreKeywords().stream().anyMatch(text::contains);
     }
 
     private Integer findNumbers(String text, Pattern pattern) {

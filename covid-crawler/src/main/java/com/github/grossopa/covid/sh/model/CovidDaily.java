@@ -39,5 +39,10 @@ import java.util.List;
 public class CovidDaily {
     private final Date date;
     private final String url;
+    private final int confirmed;
+    private final int asymptomatic;
+    private final int closedLoopConverted;
+    private final int closedLoopConfirmed;
+    private final int closedLoopAsymptomatic;
     private final List<CovidDailyDistrict> dailyDistricts;
 }

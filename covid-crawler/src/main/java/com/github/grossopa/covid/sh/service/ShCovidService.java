@@ -78,7 +78,6 @@ public class ShCovidService {
         collectData(indexPageCrawler.crawlIndexPages());
     }
 
-
     public void collectData(List<IndexPage> pages) {
         List<String> districts = dataManager.findDistricts();
         List<String> existingUrls = dailyService.findExistingUrls();

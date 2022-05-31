@@ -57,6 +57,9 @@ public class ShCovidDailyEntity extends AbstractAuditedEntity {
     @Column(name = "asymptomatic")
     private Integer asymptomatic;
 
+    @Column(name = "closedLoopConverted")
+    private Integer closedLoopConverted;
+
     @Column(name = "closedLoopConfirmed")
     private Integer closedLoopConfirmed;
 
