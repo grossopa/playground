@@ -15,7 +15,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @Slf4j
 @Component
-public class GreetingHandler {
+public class HealthCheckHandler {
 
     public Mono<ServerResponse> healthCheck(ServerRequest request) {
         long delayInMs = parseLong(request.queryParam("delayInMs").orElse("1"));

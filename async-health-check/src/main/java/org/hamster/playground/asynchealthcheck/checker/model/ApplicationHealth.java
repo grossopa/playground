@@ -24,6 +24,7 @@ public class ApplicationHealth {
         if (!Objects.equals(lastResult, result)) {
             log.info("application health {} changed from {} to {}", application, lastResult, result);
         }
+        this.checking = false;
         this.lastResult = result;
         this.lastCheckTimeInMs = System.currentTimeMillis();
     }

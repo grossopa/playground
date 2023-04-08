@@ -51,4 +51,9 @@ public class HealthResult {
     public int hashCode() {
         return Objects.hash(code, message);
     }
+
+    @Override
+    public String toString() {
+        return "HealthResult{" + "code='" + code + '\'' + ", message='" + message + '\'' + '}';
+    }
 }
